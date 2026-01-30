@@ -9,12 +9,17 @@
 
 #include <lvgl.h>
 
-#if !defined(LV_IMG_CF_INDEXED_1BIT) && defined(LV_IMAGE_CF_INDEXED_1BIT)
-#define LV_IMG_CF_INDEXED_1BIT LV_IMAGE_CF_INDEXED_1BIT
-#endif
-
-#if !defined(LV_IMG_CF_INDEXED_1BIT) && defined(LV_IMG_CF_ALPHA_1BIT)
-#define LV_IMG_CF_INDEXED_1BIT LV_IMG_CF_ALPHA_1BIT
+/* LVGL compatibility: ZMK's LVGL may use LV_IMAGE_* names or omit indexed 1-bit. */
+#ifndef LV_IMG_CF_INDEXED_1BIT
+  #ifdef LV_IMAGE_CF_INDEXED_1BIT
+    #define LV_IMG_CF_INDEXED_1BIT LV_IMAGE_CF_INDEXED_1BIT
+  #elif defined(LV_IMG_CF_ALPHA_1BIT)
+    #define LV_IMG_CF_INDEXED_1BIT LV_IMG_CF_ALPHA_1BIT
+  #elif defined(LV_IMAGE_CF_ALPHA_1BIT)
+    #define LV_IMG_CF_INDEXED_1BIT LV_IMAGE_CF_ALPHA_1BIT
+  #else
+    #error "No compatible LVGL 1-bit image color format constant found"
+  #endif
 #endif
 
 #ifndef LV_ATTRIBUTE_MEM_ALIGN
